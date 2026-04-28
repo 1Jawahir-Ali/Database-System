@@ -1,45 +1,38 @@
-# Database-System
-Database System Labs
-**Course:** Introduction to Database Systems
-**Topic Coverage:** Data vs Information, DBMS, ER Modeling, Normalization, SQL
+## DATABASE-SYSTEM LABS
+##### COURSE: Introduction to Database Systems<br>
+##### TOPIC COVERAGE: Data vs Information, DBMS, ER Modeling, Normalization, SQL
 
-## 📋 Table of Contents
+## LAB-1 ENVIRONMENT SETUP
 
-- [Lab 01 — Environment Setup]
-- [Lab 02 — Database Design & SQL Implementation]
-- [Course Topics Overview]
-
-## Lab 01 — Environment Setup
-
-### 🎯 Objective
+### OBJECTIVE
 Install and configure the local development environment required for database management.
 
-### ✅ Tasks Completed
+### TASK COMPLETED
 - Installed **XAMPP** software bundle (Apache, MySQL, PHP, phpMyAdmin)
 - Configured Apache and MySQL services for local operation
 - Verified **phpMyAdmin** access via browser interface
 - Set up the environment for database creation and management
 
-### 🛠️ Tools Used
-| Tool | Purpose |
+### TOOL USED
+| TOOL | PURPOSE |
 |------|---------|
 | XAMPP | Local server stack (Apache + MySQL + PHP) |
 | phpMyAdmin | GUI-based database management |
 | MySQL (MariaDB) | Relational database engine |
 
-## Lab 02 — Database Design & SQL Implementation
+## LAB-2 DATABASE DESIGN & SQL IMPLEMENTATION
 
-### 🎯 Objective
+#### OBJECTIVE
 Design and implement a normalized relational database schema for a **Point of Sale (POS)** system using MySQL/phpMyAdmin.
 
-### 📁 File
+#### FILE
 `Lab_02.sql` — Full SQL dump including table structure, constraints, and sample data.
 
-### 🗂️ Database: `pos`
+#### DATABASE: `pos`
 
 The POS database consists of the following tables:
 
-| Table | Description |
+| TABLE| DESCRIPTION|
 |-------|-------------|
 | `user` | System users with roles (Admin, Seller, Customer, etc.) |
 | `role` | Defines user roles (Admin, Seller, Customer, Manager, etc.) |
@@ -51,7 +44,7 @@ The POS database consists of the following tables:
 | `orders` | Customer orders with date and total amount |
 | `order_items` | Individual items within each order |
 
-### 🔗 Relationships & Constraints
+#### RELATIONSHIP & CONSTRAINTS
 
 - `user` ← `role` (Foreign Key: `role_id`) — Each user has one role
 - `admin` ← `user` (Foreign Key: `user_id`) — Admins are users
@@ -63,7 +56,7 @@ The POS database consists of the following tables:
 
 All foreign keys use `ON DELETE CASCADE ON UPDATE CASCADE` where applicable.
 
-### 📊 Sample Data Overview
+#### SAMPLE DATA OVERVIEW
 
 - **10 Users** — Jawahir, Hussain, Usman, Bilal, Hamza, Zain, Kashif, Faisal, Imran (various roles)
 - **10 Customers** — Hassan, Usman, Hamza, Kashif, Imran, Ahsan, Saad, Zeeshan, Noman, Tariq
@@ -71,7 +64,7 @@ All foreign keys use `ON DELETE CASCADE ON UPDATE CASCADE` where applicable.
 - **10 Orders** — Ranging from Rs. 50 to Rs. 80,000
 - **10 Categories** — Electronics, Clothes, Food, Books, Sports, Shoes, Bags, Accessories, Furniture, Stationary
 
-### 🧠 Concepts Applied
+#### CONCEPT APPLIED
 
 - **DDL (Data Definition Language):** `CREATE TABLE`, `ALTER TABLE`, Primary Keys, Foreign Keys
 - **DML (Data Manipulation Language):** `INSERT INTO` for populating tables
@@ -83,9 +76,9 @@ All foreign keys use `ON DELETE CASCADE ON UPDATE CASCADE` where applicable.
   - **2NF** — No partial dependencies on composite keys
   - **3NF** — No transitive dependencies
 
-## 📚 Course Topics Overview
+#### COURSE TOPICS OVERVIEW
 
-### Core Concepts
+#### CORE CONCEPT
 
 **Data vs Information & File Systems**
 - Difference between raw data and meaningful information
