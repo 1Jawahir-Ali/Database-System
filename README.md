@@ -2,23 +2,6 @@
 ##### COURSE: Introduction to Database Systems<br>
 ##### TOPIC COVERAGE: Data vs Information, DBMS, ER Modeling, Normalization, SQL
 
-## LAB-1 ENVIRONMENT SETUP
-
-### OBJECTIVE
-Install and configure the local development environment required for database management.
-
-### TASK COMPLETED
-- Installed **XAMPP** software bundle (Apache, MySQL, PHP, phpMyAdmin)
-- Configured Apache and MySQL services for local operation
-- Verified **phpMyAdmin** access via browser interface
-- Set up the environment for database creation and management
-
-### TOOL USED
-| TOOL | PURPOSE |
-|------|---------|
-| XAMPP | Local server stack (Apache + MySQL + PHP) |
-| phpMyAdmin | GUI-based database management |
-| MySQL (MariaDB) | Relational database engine |
 
 ## LAB-2 DATABASE DESIGN & SQL IMPLEMENTATION
 
