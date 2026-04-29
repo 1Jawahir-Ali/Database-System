@@ -33,3 +33,12 @@ The POS database consists of the following tables:
 - `order_items` ← `orders` & `products` (Foreign Keys) — Items reference orders and products
 
 All foreign keys use `ON DELETE CASCADE ON UPDATE CASCADE` where applicable.
+
+
+#### 🔎SAMPLE DATA OVERVIEW
+
+- **10 Users** — Jawahir, Hussain, Usman, Bilal, Hamza, Zain, Kashif, Faisal, Imran (various roles)
+- **10 Customers** — Hassan, Usman, Hamza, Kashif, Imran, Ahsan, Saad, Zeeshan, Noman, Tariq
+- **10 Products** — Laptop (80,000), Mobile (50,000), T-Shirt (1,500), Shoes (4,000), etc.
+- **10 Orders** — Ranging from Rs. 50 to Rs. 80,000
+- **10 Categories** — Electronics, Clothes, Food, Books, Sports, Shoes, Bags, Accessories, Furniture, Stationary
