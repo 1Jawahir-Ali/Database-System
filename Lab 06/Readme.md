@@ -1,4 +1,4 @@
-# Database Systems Lab 06 - SQL Joins Assignment
+# Database Systems Lab 06 - SQL Joins
 ### Lab Description
 
 This assignment is based on a Library Database Management System.
