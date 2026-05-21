@@ -1,4 +1,4 @@
-###🔹 Scalar Functions (MySQL)
+### 🔹 Scalar Functions (MySQL)
 ### 🔺 Lab Overview
 This lab focuses on the implementation of **Scalar Functions in MySQL** using an Employee Database.
 
