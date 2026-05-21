@@ -2,7 +2,7 @@
 ### 🔺 Lab Overview
 This lab focuses on the implementation of **Scalar Functions in MySQL** using an Employee Database.
 
-####🔹 The project includes:
+### 🔹 The project includes:
 - Database creation
 - Table creation
 - Sample data insertion
@@ -18,7 +18,7 @@ This lab focuses on the implementation of **Scalar Functions in MySQL** using an
 | Database | `emp_lab` |
 | Table | `Employee` |
 
-##🔹 Topics Covered
+### 🔹 Topics Covered
 
 - `TRIM()`
 - `UPPER()`
