@@ -1,17 +1,16 @@
-## 🧪 LAB 01 – Environment Setup
+##  LAB 01 – Environment Setup
 
-### 📌 Objective
+###  Objective
 The objective of this lab is to install and configure a local development environment for database management.
 
-### ⚙️ Environment Setup
+###  Environment Setup
 In this lab, a complete local server environment was set up using XAMPP, which includes:
 
 - Apache Server (for hosting)  
-- MySQL (MariaDB) Database  
-- PHP (Server-side scripting)  
+- MySQL Database  
 - phpMyAdmin (GUI for database management)
   
-### ✅ Tasks Performed
+### Tasks Performed
 
 - Installed XAMPP software bundle  
 - Configured Apache and MySQL services  
@@ -20,7 +19,7 @@ In this lab, a complete local server environment was set up using XAMPP, which i
   http://localhost/phpmyadmin  
 - Ensured system is ready for database creation and management  
 
-### 🛠️ Tools Used
+### Tools Used
 
 | Tool        | Purpose |
 |------------|--------|
@@ -28,10 +27,10 @@ In this lab, a complete local server environment was set up using XAMPP, which i
 | phpMyAdmin | GUI-based database management |
 | MySQL      | Relational database engine |
 
-### 📂 Repository Note
+### Repository Note
 This repository contains lab documentation only. No practical task or code file is included for this lab.
 
-## 🚀 Outcome
+## Outcome
 Successfully configured a local development environment for future database labs.
 
 
