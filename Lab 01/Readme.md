@@ -27,10 +27,6 @@ In this lab, a complete local server environment was set up using XAMPP, which i
 | phpMyAdmin | GUI-based database management |
 | MySQL      | Relational database engine |
 
-### Repository Note
-This repository contains lab documentation only. No practical task or code file is included for this lab.
-
-## Outcome
 Successfully configured a local development environment for future database labs.
 
 
