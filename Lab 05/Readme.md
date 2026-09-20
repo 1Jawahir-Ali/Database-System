@@ -58,10 +58,10 @@ The purpose of this lab is to further normalize the hospital patient-visit datab
 
 ## Improvement from 1NF
 
-* ✔ Reduced redundancy
-* ✔ Data split into logical tables
-* ✔ Better structure than 1NF
-*  Still not fully normalized
+* Reduced redundancy
+* Data split into logical tables
+* Better structure than 1NF
+* Still not fully normalized
 
 
 Next step: **3NF (final optimized design)**
