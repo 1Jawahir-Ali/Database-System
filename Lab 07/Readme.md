@@ -1,42 +1,24 @@
-### 🔹 Scalar Functions (MySQL)
-### 🔺 Lab Overview
-This lab focuses on the implementation of **Scalar Functions in MySQL** using an Employee Database.
+# LAB 07 — Filters Part 02: BETWEEN, IN, LIKE Patterns, IS NULL
 
-### 🔹 The project includes:
-- Database creation
-- Table creation
-- Sample data insertion
-- String functions
-- Numeric functions
-- Date functions
-- Combined formatting queries
-- 
-### 🔹 Database Information
+## Purpose
+The purpose of this lab is to perform advanced filtering using range, list, pattern, and NULL-value conditions.
 
-| Item | Name |
-|---|---|
-| Database | `emp_lab` |
-| Table | `Employee` |
+## Topics Covered
+- BETWEEN
+- IN
+- LIKE
+- Wildcards
+- IS NULL
+- AND / OR
+- Case-insensitive searching
 
-### 🔹 Topics Covered
+## Work Performed
+- Filtered books using publication-year ranges
+- Used IN for multiple genres
+- Searched titles using LIKE patterns
+- Identified records containing NULL values
+- Combined multiple filtering conditions
 
-- `TRIM()`
-- `UPPER()`
-- `LOWER()`
-- `CONCAT()`
-- `REPLACE()`
-- `LEFT()`
-- `SUBSTRING_INDEX()`
-- `ROUND()`
-- `FLOOR()`
-- `DATE_FORMAT()`
-- `TIMESTAMPDIFF()`
-- `YEAR()`
+## Objective
+To develop practical skills for searching and filtering database records using advanced SQL conditions.
 
-## 🔺 Files Included
-
-```text
-Lab 06-ScalarFunctions/
-│
-├── 2024-SE-34_ScalarFunctions.sql
-└── README.md
