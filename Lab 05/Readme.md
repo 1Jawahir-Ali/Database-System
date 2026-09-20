@@ -137,11 +137,11 @@ After applying 3NF, we remove **transitive dependencies** and split the data int
 
 ## Benefits of 3NF
 
-* ✔ No redundancy (data stored only once)
-* ✔ No update anomalies
-* ✔ No insertion anomalies
-* ✔ No deletion anomalies
-* ✔ Clean and scalable database design
+* No redundancy (data stored only once)
+* No update anomalies
+* No insertion anomalies
+* No deletion anomalies
+* Clean and scalable database design
 
  Final structure follows proper relationships using **Primary Keys and Foreign Keys**, making the database efficient and reliable.
 
@@ -159,9 +159,9 @@ After applying 3NF, we remove **transitive dependencies** and split the data int
 
 By converting the hospital data step-by-step from **UNF → 1NF → 2NF → 3NF**, we achieved:
 
-* ✔ Elimination of redundancy
-* ✔ Removal of anomalies
-* ✔ Improved data integrity
+* Elimination of redundancy
+* Removal of anomalies
+* Improved data integrity
 
 
 
