@@ -1,162 +1,208 @@
--- DATABASE SYSTEMS LAB
--- Topic: Joins
--- Scenario: Library Database
-
-CREATE DATABASE IF NOT EXISTS library_lab;
-
-USE library_lab;
-
-DROP TABLE IF EXISTS Loan, Book, Member, Author;
-
--- AUTHOR TABLE
-CREATE TABLE Author (
-    AuthorID INT PRIMARY KEY,
-    AuthorName VARCHAR(60) NOT NULL,
-    Country VARCHAR(30)
+CREATE DATABASE IF NOT EXISTS joins_lab;
+USE joins_lab;
+DROP TABLE IF EXISTS Assignment, Project, Employee, Department;
+CREATE TABLE Department (
+    DeptID    INT PRIMARY KEY,
+    DeptName VARCHAR(40) NOT NULL,
+    Location VARCHAR(30),
+    Budget    DECIMAL(12,2)
 );
-
--- BOOK TABLE
-CREATE TABLE Book (
-    BookID INT PRIMARY KEY,
-    Title VARCHAR(80) NOT NULL,
-    Genre VARCHAR(30),
-    Price DECIMAL(8,2),
-    AuthorID INT,
-    PublishedYear INT,
-
-    FOREIGN KEY (AuthorID)
-    REFERENCES Author(AuthorID)
+CREATE TABLE Employee (
+    EmpID     INT PRIMARY KEY,
+    EmpName    VARCHAR(50) NOT NULL,
+    Gender     CHAR(1),
+    Salary     DECIMAL(10,2),
+    HireDate DATE,
+    City     VARCHAR(30),
+    ManagerID INT,
+    DeptID     INT,
+    FOREIGN KEY (DeptID)    REFERENCES Department(DeptID),
+    FOREIGN KEY (ManagerID) REFERENCES Employee(EmpID)
 );
-
--- MEMBER TABLE
-CREATE TABLE Member (
-    MemberID INT PRIMARY KEY,
-    MemberName VARCHAR(60) NOT NULL,
-    City VARCHAR(30),
-    JoinDate DATE
+CREATE TABLE Project (
+    ProjectID    INT PRIMARY KEY,
+    ProjectName VARCHAR(50) NOT NULL,
+    StartDate    DATE,
+    EndDate     DATE,
+    DeptID     INT,
+    FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
 );
-
--- LOAN TABLE
-CREATE TABLE Loan (
-    LoanID INT PRIMARY KEY,
-    MemberID INT,
-    BookID INT,
-    LoanDate DATE,
-    ReturnDate DATE,
-
-    FOREIGN KEY (MemberID)
-    REFERENCES Member(MemberID),
-
-    FOREIGN KEY (BookID)
-    REFERENCES Book(BookID)
+CREATE TABLE Assignment (
+    EmpID INT,
+    ProjectID INT,
+    HoursPerWeek INT,
+    PRIMARY KEY (EmpID, ProjectID),
+    FOREIGN KEY (EmpID)     REFERENCES Employee(EmpID),
+    FOREIGN KEY (ProjectID) REFERENCES Project(ProjectID)
 );
+-- Departments
+INSERT INTO Department VALUES
+(10, 'Engineering', 'Lahore', 5000000),
+(20, 'Marketing', 'Karachi', 2000000),
+(30, 'Finance',     'Islamabad',3000000),
+(40, 'Research',    'Lahore', 4000000),
+(50, 'Sales',     'Karachi', NULL); -- new dept, no employees yet-- Employees (NULL ManagerID = top of the hierarchy)
+INSERT INTO Employee VALUES
+(101,'Ali Khan',    'M', 120000,'2018-03-15','Lahore',    NULL, 10),
+(102,'Sara Iqbal', 'F', 95000,'2019-06-01','Lahore',     101, 10),
+(103,'Hamza Raza', 'M', 85000,'2020-01-20','Karachi',    101, 10),
+(104,'Ayesha Noor', 'F', 110000,'2017-11-10','Karachi', NULL, 20),
+(105,'Bilal Ahmed', 'M', 70000,'2021-04-05','Karachi',    104, 20),
+(106,'Fatima Sheikh','F', 90000,'2019-09-12','Islamabad', NULL, 30),
+(107,'Usman Tariq', 'M', 78000,'2022-02-18','Islamabad', 106, 30),
+(108,'Maira Javed', 'F', 115000,'2016-07-22','Lahore',    NULL, 40),
+(109,'Zain Abbas', 'M', 60000,'2023-01-09','Lahore',     108, 40),
+(110,'Nida Yousaf', 'F', 72000,'2022-08-30',NULL,         108, 40);-- Projects
+INSERT INTO Project VALUES
+(1001,'Website Revamp', '2024-01-10','2024-06-30', 10),
+(1002,'Mobile App',     '2024-03-01','2024-12-31', 10),
+(1003,'Brand Campaign', '2024-02-15','2024-05-15', 20),
+(1004,'Audit System',    '2024-04-01',NULL,         30),
+(1005,'AI Research',     '2024-05-01','2025-04-30', 40),
+(1006,'Internal Tool', '2024-06-01','2024-09-30', NULL); -- no dept yet-- Assignments (note: employees 107 and 110 are NOT assigned, project 1006 has no staff)
+INSERT INTO Assignment VALUES
+(101, 1001, 10),
+(102, 1001, 20),
+(102, 1002, 15),
+(103, 1002, 30),
+(104, 1003, 25),
+(105, 1003, 40),
+(106, 1004, 35),
+(108, 1005, 20),
+(109, 1005, 30);
 
--- INSERT INTO AUTHOR
-INSERT INTO Author VALUES
-(1,'Jane Austen','UK'),
-(2,'Chinua Achebe','Nigeria'),
-(3,'Haruki Murakami','Japan'),
-(4,'Bapsi Sidhwa','Pakistan'),
-(5,'Mohsin Hamid','Pakistan'),
-(6,'Anonymous Writer',NULL);
+-------------------------------------------------------------------------
+-- Task A1
+-- List every employee with department name and location
+SELECT 
+    e.EmpID,
+    e.EmpName,
+    d.DeptName,
+    d.Location
+FROM Employee e
+INNER JOIN Department d
+    ON e.DeptID = d.DeptID;
 
--- INSERT INTO BOOK
-INSERT INTO Book VALUES
-(101,'Pride and Prejudice','Fiction',850.00,1,1813),
-(102,'Emma','Fiction',900.00,1,1815),
-(103,'Things Fall Apart','Fiction',1100.00,2,1958),
-(104,'Norwegian Wood','Fiction',1500.00,3,1987),
-(105,'Kafka on the Shore','Fiction',1700.00,3,2002),
-(106,'Ice-Candy-Man','Fiction',1200.00,4,1988),
-(107,'The Reluctant Fundamentalist','Fiction',1300.00,5,2007),
-(108,'Exit West','Fiction',1450.00,5,2017),
-(109,'Mystery Title','Mystery',950.00,NULL,2020);
 
--- INSERT INTO MEMBER
-INSERT INTO Member VALUES
-(201,'Ahmad Raza','Lahore','2023-01-15'),
-(202,'Sara Imran','Karachi','2023-03-20'),
-(203,'Bilal Khan','Lahore','2024-02-10'),
-(204,'Fatima Ali','Islamabad','2022-09-05'),
-(205,'Hira Yousaf',NULL,'2024-05-01');
+-- Task A2
+-- Include employees whose DeptID is NULL
+SELECT 
+    e.EmpID,
+    e.EmpName,
+    e.DeptID,
+    d.DeptName,
+    d.Location
+FROM Employee e
+LEFT JOIN Department d
+    ON e.DeptID = d.DeptID;
 
--- INSERT INTO LOAN
-INSERT INTO Loan VALUES
-(1,201,101,'2024-03-01','2024-03-15'),
-(2,201,104,'2024-04-10',NULL),
-(3,202,103,'2024-02-20','2024-03-05'),
-(4,202,107,'2024-05-01',NULL),
-(5,203,105,'2024-04-25','2024-05-15'),
-(6,204,102,'2024-01-10','2024-01-30'),
-(7,204,108,'2024-06-01',NULL);
 
--- LAB 08 — Joins Part 01
--- INNER, LEFT, RIGHT Joins
+-- Task A3
+-- List every department with employee names
+-- Departments without employees should also appear
+SELECT 
+    d.DeptID,
+    d.DeptName,
+    e.EmpName
+FROM Department d
+LEFT JOIN Employee e
+    ON d.DeptID = e.DeptID
+ORDER BY d.DeptID;
 
--- Q1
--- Show every book with its author's name and country
--- INNER JOIN
 
-SELECT
-    b.Title,
-    a.AuthorName,
-    a.Country
-FROM Book b
-INNER JOIN Author a
-ON b.AuthorID = a.AuthorID;
+-- Task A4
+-- List every project with department name and location
+-- Include projects without a department
+SELECT 
+    p.ProjectID,
+    p.ProjectName,
+    d.DeptName,
+    d.Location
+FROM Project p
+LEFT JOIN Department d
+    ON p.DeptID = d.DeptID;
 
--- Q2
--- Show every author with their books
--- Authors with no books must still appear
--- LEFT JOIN
 
-SELECT
-    a.AuthorName,
-    b.Title
-FROM Author a
-LEFT JOIN Book b
-ON a.AuthorID = b.AuthorID;
+-- Task A5
+-- Find employees who are not assigned to any project
+SELECT 
+    e.EmpID,
+    e.EmpName
+FROM Employee e
+LEFT JOIN Assignment a
+    ON e.EmpID = a.EmpID
+WHERE a.EmpID IS NULL;
 
--- Q3
--- List members who have never borrowed any book
--- LEFT JOIN + IS NULL
 
-SELECT
-    m.MemberName
-FROM Member m
-LEFT JOIN Loan l
-ON m.MemberID = l.MemberID
-WHERE l.LoanID IS NULL;
+-- Task A6
+-- List projects that currently have no assignments
+SELECT 
+    p.ProjectID,
+    p.ProjectName
+FROM Project p
+LEFT JOIN Assignment a
+    ON p.ProjectID = a.ProjectID
+WHERE a.ProjectID IS NULL;
 
--- Q6
--- List Pakistani authors and titles of their books
--- Include authors with no books
 
-SELECT
-    a.AuthorName,
-    b.Title
-FROM Author a
-LEFT JOIN Book b
-ON a.AuthorID = b.AuthorID
-WHERE a.Country = 'Pakistan';
+-- Task A7
+-- Engineering employees with salary, highest salary first
+SELECT 
+    e.EmpID,
+    e.EmpName,
+    e.Salary
+FROM Employee e
+INNER JOIN Department d
+    ON e.DeptID = d.DeptID
+WHERE d.DeptName = 'Engineering'
+ORDER BY e.Salary DESC;
 
--- Q9
+
+-- Task A8
+-- Employees working in Lahore-based departments
+SELECT 
+    e.EmpName,
+    d.DeptName
+FROM Employee e
+INNER JOIN Department d
+    ON e.DeptID = d.DeptID
+WHERE d.Location = 'Lahore';
+
+
+-- Task A9
+-- Count employees in every department
+-- Include departments with zero employees
+SELECT 
+    d.DeptID,
+    d.DeptName,
+    COUNT(e.EmpID) AS EmployeeCount
+FROM Department d
+LEFT JOIN Employee e
+    ON d.DeptID = e.DeptID
+GROUP BY d.DeptID, d.DeptName
+ORDER BY d.DeptID;
+
+
+-- Task A10
 -- FULL OUTER JOIN using UNION
--- MySQL does not directly support FULL OUTER JOIN,
--- so LEFT JOIN and RIGHT JOIN are combined with UNION.
-
-SELECT
-    a.AuthorName,
-    b.Title
-FROM Author a
-LEFT JOIN Book b
-ON a.AuthorID = b.AuthorID
+SELECT 
+    e.EmpID,
+    e.EmpName,
+    d.DeptID,
+    d.DeptName,
+    d.Location
+FROM Employee e
+LEFT JOIN Department d
+    ON e.DeptID = d.DeptID
 
 UNION
 
-SELECT
-    a.AuthorName,
-    b.Title
-FROM Author a
-RIGHT JOIN Book b
-ON a.AuthorID = b.AuthorID;
+SELECT 
+    e.EmpID,
+    e.EmpName,
+    d.DeptID,
+    d.DeptName,
+    d.Location
+FROM Employee e
+RIGHT JOIN Department d
+    ON e.DeptID = d.DeptID;
