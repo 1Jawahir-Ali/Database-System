@@ -1,5 +1,4 @@
 -- LAB 12 — Aggregate Functions
--- Submission: RollNo_Aggregates.sql
 
 CREATE DATABASE IF NOT EXISTS uni_lab;
 USE uni_lab;
