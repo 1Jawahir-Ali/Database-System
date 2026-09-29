@@ -1,245 +1,410 @@
--- DATABASE SYSTEMS LAB 05
--- Topic: Database Normalization
--- Scenario: Hospital Patient Visits
--- Scope: Conversion to 2NF and 3NF
-
-CREATE DATABASE IF NOT EXISTS hospital_normalization;
-
-USE hospital_normalization;
-
--- ______________________________
--- DELIVERABLE 3
--- 2NF SCHEMA
--- ______________________________
-
 /*
+DATABASE SYSTEMS - LAB 05
+Topic: Second Normal Form (2NF) and Third Normal Form (3NF)
 
-PARTIAL DEPENDENCIES REMOVED
-
-1.
-PatientName and PatientPhone depend only on PatientID
-
-2.
-DoctorName, Specialty, DeptName depend only on DoctorID
-
-3.
-DeptHead depends only on DeptName
-
-Therefore separate tables are created.
-
+Note:
+Run Lab 04 first because this lab uses the 1NF tables created there.
 */
 
--- ____________________________
--- PATIENT TABLE
--- ___________________________
+/* =========================================================
+   PART A - BOOKSTORE
+   ========================================================= */
 
+USE bookstore_db;
+
+
+/* TASK 3 - Convert Bookstore from 1NF to 2NF */
+
+/*
+1NF table:
+OrderBook_1NF
+Primary Key = (OrderID, BookID)
+
+Partial dependencies:
+
+OrderID -> OrderDate, CustID, CustName, CustEmail
+
+BookID -> BookTitle, Publisher, UnitPrice
+
+(OrderID, BookID) -> Qty
+
+OrderDate, CustID, CustName and CustEmail depend only on OrderID.
+BookTitle, Publisher and UnitPrice depend only on BookID.
+Qty depends on the complete composite key.
+
+To remove partial dependencies, we create:
+Orders_2NF
+Book_2NF
+OrderItem_2NF
+*/
+
+DROP TABLE IF EXISTS OrderItem_2NF;
+DROP TABLE IF EXISTS Orders_2NF;
+DROP TABLE IF EXISTS Book_2NF;
+
+CREATE TABLE Orders_2NF (
+    OrderID VARCHAR(10) PRIMARY KEY,
+    OrderDate DATE NOT NULL,
+    CustID VARCHAR(10) NOT NULL,
+    CustName VARCHAR(50) NOT NULL,
+    CustEmail VARCHAR(80) NOT NULL
+);
+
+CREATE TABLE Book_2NF (
+    BookID VARCHAR(10) PRIMARY KEY,
+    BookTitle VARCHAR(80) NOT NULL,
+    Publisher VARCHAR(50) NOT NULL,
+    UnitPrice DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE OrderItem_2NF (
+    OrderID VARCHAR(10) NOT NULL,
+    BookID VARCHAR(10) NOT NULL,
+    Qty INT NOT NULL,
+    PRIMARY KEY (OrderID, BookID),
+    FOREIGN KEY (OrderID) REFERENCES Orders_2NF(OrderID),
+    FOREIGN KEY (BookID) REFERENCES Book_2NF(BookID)
+);
+
+
+/* Insert data into 2NF tables */
+
+INSERT INTO Orders_2NF
+(OrderID, OrderDate, CustID, CustName, CustEmail)
+SELECT DISTINCT
+    OrderID, OrderDate, CustID, CustName, CustEmail
+FROM OrderBook_1NF;
+
+INSERT INTO Book_2NF
+(BookID, BookTitle, Publisher, UnitPrice)
+SELECT DISTINCT
+    BookID, BookTitle, Publisher, UnitPrice
+FROM OrderBook_1NF;
+
+INSERT INTO OrderItem_2NF
+(OrderID, BookID, Qty)
+SELECT OrderID, BookID, Qty
+FROM OrderBook_1NF;
+
+
+/* Check 2NF */
+
+SELECT * FROM Orders_2NF;
+SELECT * FROM Book_2NF;
+SELECT * FROM OrderItem_2NF;
+
+
+/* TASK 4 - Convert Bookstore from 2NF to 3NF */
+
+/*
+In Orders_2NF, the following transitive dependency exists:
+
+OrderID -> CustID
+CustID -> CustName, CustEmail
+
+Therefore:
+
+OrderID -> CustName, CustEmail
+
+Customer information should be stored separately.
+
+Final 3NF tables:
+
+Customer
+Orders
+Book
+OrderItem
+*/
+
+DROP TABLE IF EXISTS OrderItem;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Customer;
+DROP TABLE IF EXISTS Book;
+
+
+/* Customer table */
+
+CREATE TABLE Customer (
+    CustID VARCHAR(10) PRIMARY KEY,
+    CustName VARCHAR(50) NOT NULL,
+    CustEmail VARCHAR(80) NOT NULL
+);
+
+
+/* Orders table */
+
+CREATE TABLE Orders (
+    OrderID VARCHAR(10) PRIMARY KEY,
+    OrderDate DATE NOT NULL,
+    CustID VARCHAR(10) NOT NULL,
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+
+/* Book table */
+
+CREATE TABLE Book (
+    BookID VARCHAR(10) PRIMARY KEY,
+    BookTitle VARCHAR(80) NOT NULL,
+    Publisher VARCHAR(50) NOT NULL,
+    UnitPrice DECIMAL(10,2) NOT NULL
+);
+
+
+/* OrderItem table */
+
+CREATE TABLE OrderItem (
+    OrderID VARCHAR(10) NOT NULL,
+    BookID VARCHAR(10) NOT NULL,
+    Qty INT NOT NULL,
+    PRIMARY KEY (OrderID, BookID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
+
+
+/* Insert data into 3NF tables */
+
+INSERT INTO Customer
+(CustID, CustName, CustEmail)
+SELECT DISTINCT
+    CustID, CustName, CustEmail
+FROM Orders_2NF;
+
+INSERT INTO Orders
+(OrderID, OrderDate, CustID)
+SELECT
+    OrderID, OrderDate, CustID
+FROM Orders_2NF;
+
+INSERT INTO Book
+(BookID, BookTitle, Publisher, UnitPrice)
+SELECT
+    BookID, BookTitle, Publisher, UnitPrice
+FROM Book_2NF;
+
+INSERT INTO OrderItem
+(OrderID, BookID, Qty)
+SELECT
+    OrderID, BookID, Qty
+FROM OrderItem_2NF;
+
+
+/* Check final Bookstore 3NF tables */
+
+SELECT * FROM Customer;
+SELECT * FROM Orders;
+SELECT * FROM Book;
+SELECT * FROM OrderItem;
+
+
+/* Verify original bookstore report */
+
+SELECT
+    o.OrderID,
+    o.OrderDate,
+    c.CustID,
+    c.CustName,
+    c.CustEmail,
+    b.BookID,
+    b.BookTitle,
+    b.Publisher,
+    b.UnitPrice,
+    oi.Qty
+FROM OrderItem oi
+JOIN Orders o ON oi.OrderID = o.OrderID
+JOIN Customer c ON o.CustID = c.CustID
+JOIN Book b ON oi.BookID = b.BookID
+ORDER BY o.OrderID, b.BookID;
+
+
+/* =========================================================
+   PART B - HOSPITAL
+   ========================================================= */
+
+USE hospital_lab;
+
+
+/* TASK 3 - Convert Hospital from 1NF to 2NF */
+
+/*
+Visit_1NF has a single-column primary key:
+
+VisitID
+
+Since the primary key contains only one attribute, there can
+be no partial dependency.
+
+Therefore the Hospital 1NF table is already in 2NF.
+
+No decomposition is required for 2NF.
+*/
+
+
+SELECT * FROM Visit_1NF;
+
+
+/* TASK 4 - Convert Hospital from 2NF to 3NF */
+
+/*
+The following transitive dependencies exist:
+
+PatientID -> PatientName, PatientPhone
+
+DoctorID -> DoctorName, Specialty, DeptName
+
+DeptName -> DeptHead
+
+Therefore the information is separated into:
+
+Patient
+Doctor
+Department
+Visit
+
+Visit keeps information that belongs directly to a visit.
+*/
+
+
+DROP TABLE IF EXISTS Visit;
+DROP TABLE IF EXISTS Doctor;
+DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS Patient;
+
+
+/* Patient table */
 
 CREATE TABLE Patient (
     PatientID VARCHAR(10) PRIMARY KEY,
-    PatientName VARCHAR(50),
-    PatientPhone VARCHAR(20)
+    PatientName VARCHAR(50) NOT NULL,
+    PatientPhone VARCHAR(20) NOT NULL
 );
 
-INSERT INTO Patient VALUES
-('P-201','Hassan','0300-1112233'),
-('P-202','Mehreen','0301-4445566'),
-('P-203','Junaid','0302-7778899');
 
--- ___________________________
--- DOCTOR TABLE
--- ___________________________
+/* Department table */
 
-DROP TABLE IF EXISTS Doctor;
+CREATE TABLE Department (
+    DeptName VARCHAR(60) PRIMARY KEY,
+    DeptHead VARCHAR(50) NOT NULL
+);
+
+
+/* Doctor table */
 
 CREATE TABLE Doctor (
     DoctorID VARCHAR(10) PRIMARY KEY,
-    DoctorName VARCHAR(50),
-    Specialty VARCHAR(50),
-    DeptName VARCHAR(50)
+    DoctorName VARCHAR(50) NOT NULL,
+    Specialty VARCHAR(50) NOT NULL,
+    DeptName VARCHAR(60) NOT NULL,
+    FOREIGN KEY (DeptName) REFERENCES Department(DeptName)
 );
 
-INSERT INTO Doctor VALUES
-('D-30','Dr. Imran','Cardiology','Heart Care'),
-('D-31','Dr. Asma','Dermatology','Skin Clinic');
 
--- ____________________________
--- DEPARTMENT TABLE
--- ____________________________
+/* Visit table */
 
-DROP TABLE IF EXISTS Department;
-
-CREATE TABLE Department (
-    DeptName VARCHAR(50) PRIMARY KEY,
-    DeptHead VARCHAR(50)
-);
-
-INSERT INTO Department VALUES
-('Heart Care','Dr. Tariq'),
-('Skin Clinic','Dr. Asma');
-
--- _____________________________
--- VISIT TABLE
--- _____________________________
-
-DROP TABLE IF EXISTS VisitRecord;
-
-CREATE TABLE VisitRecord (
+CREATE TABLE Visit (
     VisitID VARCHAR(10) PRIMARY KEY,
-    VisitDate DATE,
-    PatientID VARCHAR(10),
-    DoctorID VARCHAR(10),
-    Diagnosis VARCHAR(100),
-    Fee INT
+    VisitDate DATE NOT NULL,
+    PatientID VARCHAR(10) NOT NULL,
+    DoctorID VARCHAR(10) NOT NULL,
+    Diagnosis VARCHAR(80) NOT NULL,
+    Fee INT NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
 );
 
-INSERT INTO VisitRecord VALUES
-('V-9001','2026-04-10','P-201','D-30','Hypertension',2500),
-('V-9002','2026-04-10','P-202','D-31','Eczema',2000),
-('V-9003','2026-04-11','P-201','D-31','Allergy',2000),
-('V-9004','2026-04-12','P-203','D-30','Arrhythmia',3000);
 
--- ___________________________
--- DELIVERABLE 4
--- 3NF SCHEMA WITH FOREIGN KEYS
--- __________________________
+/* Insert data into 3NF tables */
 
-DROP TABLE IF EXISTS Visit3NF;
-DROP TABLE IF EXISTS Doctor3NF;
-DROP TABLE IF EXISTS Department3NF;
-DROP TABLE IF EXISTS Patient3NF;
+INSERT INTO Patient
+(PatientID, PatientName, PatientPhone)
+SELECT DISTINCT
+    PatientID, PatientName, PatientPhone
+FROM Visit_1NF;
 
--- _____________________________
--- PATIENT 3NF
--- _____________________________
+INSERT INTO Department
+(DeptName, DeptHead)
+SELECT DISTINCT
+    DeptName, DeptHead
+FROM Visit_1NF;
 
-CREATE TABLE Patient3NF (
-    PatientID VARCHAR(10) PRIMARY KEY,
-    PatientName VARCHAR(50),
-    PatientPhone VARCHAR(20)
-);
+INSERT INTO Doctor
+(DoctorID, DoctorName, Specialty, DeptName)
+SELECT DISTINCT
+    DoctorID, DoctorName, Specialty, DeptName
+FROM Visit_1NF;
 
-INSERT INTO Patient3NF VALUES
-('P-201','Hassan','0300-1112233'),
-('P-202','Mehreen','0301-4445566'),
-('P-203','Junaid','0302-7778899');
+INSERT INTO Visit
+(VisitID, VisitDate, PatientID, DoctorID, Diagnosis, Fee)
+SELECT
+    VisitID,
+    VisitDate,
+    PatientID,
+    DoctorID,
+    Diagnosis,
+    Fee
+FROM Visit_1NF;
 
--- __________________________
--- DEPARTMENT 3NF
--- _________________________
 
-CREATE TABLE Department3NF (
-    DeptName VARCHAR(50) PRIMARY KEY,
-    DeptHead VARCHAR(50)
-);
+/* Check final Hospital 3NF tables */
 
-INSERT INTO Department3NF VALUES
-('Heart Care','Dr. Tariq'),
-('Skin Clinic','Dr. Asma');
+SELECT * FROM Patient;
+SELECT * FROM Department;
+SELECT * FROM Doctor;
+SELECT * FROM Visit;
 
--- ________________________________
--- DOCTOR 3NF
--- ________________________________
 
-CREATE TABLE Doctor3NF (
-    DoctorID VARCHAR(10) PRIMARY KEY,
-    DoctorName VARCHAR(50),
-    Specialty VARCHAR(50),
-    DeptName VARCHAR(50),
-
-    FOREIGN KEY (DeptName)
-    REFERENCES Department3NF(DeptName)
-);
-
-INSERT INTO Doctor3NF VALUES
-('D-30','Dr. Imran','Cardiology','Heart Care'),
-('D-31','Dr. Asma','Dermatology','Skin Clinic');
-
--- ___________________________
--- VISIT 3NF
--- ___________________________
-
-CREATE TABLE Visit3NF (
-    VisitID VARCHAR(10) PRIMARY KEY,
-    VisitDate DATE,
-    PatientID VARCHAR(10),
-    DoctorID VARCHAR(10),
-    Diagnosis VARCHAR(100),
-    Fee INT,
-
-    FOREIGN KEY (PatientID)
-    REFERENCES Patient3NF(PatientID),
-
-    FOREIGN KEY (DoctorID)
-    REFERENCES Doctor3NF(DoctorID)
-);
-
-INSERT INTO Visit3NF VALUES
-('V-9001','2026-04-10','P-201','D-30','Hypertension',2500),
-
-('V-9002','2026-04-10','P-202','D-31','Eczema',2000),
-
-('V-9003','2026-04-11','P-201','D-31','Allergy',2000),
-
-('V-9004','2026-04-12','P-203','D-30','Arrhythmia',3000);
-
--- 
--- DELIVERABLE 5
--- SINGLE SELECT QUERY TO RECREATE TABLE 8.1
---
+/* Verify original hospital report */
 
 SELECT
     v.VisitID,
     v.VisitDate,
-
     p.PatientID,
     p.PatientName,
     p.PatientPhone,
-
     d.DoctorID,
     d.DoctorName,
     d.Specialty,
-
-    dept.DeptName,
-    dept.DeptHead,
-
+    dp.DeptName,
+    dp.DeptHead,
     v.Diagnosis,
     v.Fee
+FROM Visit v
+JOIN Patient p
+    ON v.PatientID = p.PatientID
+JOIN Doctor d
+    ON v.DoctorID = d.DoctorID
+JOIN Department dp
+    ON d.DeptName = dp.DeptName
+ORDER BY v.VisitID;
 
-FROM Visit3NF v
 
-JOIN Patient3NF p
-ON v.PatientID = p.PatientID
-
-JOIN Doctor3NF d
-ON v.DoctorID = d.DoctorID
-
-JOIN Department3NF dept
-ON d.DeptName = dept.DeptName;
-
--- DELIVERABLE 6
--- ANOMALIES ELIMINATED
---
+/* =========================================================
+   SUMMARY
+   ========================================================= */
 
 /*
+Bookstore:
+1NF -> 2NF removes partial dependencies.
+2NF -> 3NF removes the Customer transitive dependency.
 
-1. INSERTION ANOMALY REMOVED
-New patients, doctors, or departments can be added
-without creating a visit record.
+Final Bookstore tables:
+Customer
+Orders
+Book
+OrderItem
 
-2. UPDATE ANOMALY REMOVED
-Patient phone number or department head can be updated
-in only one place.
 
-3. DELETION ANOMALY REMOVED
-Deleting a visit does not remove doctor, patient,
-or department information.
+Hospital:
+1NF -> 2NF requires no decomposition because VisitID
+is a single-column key.
 
-4. DATA REDUNDANCY REDUCED
-Duplicate patient, doctor, and department data
-is minimized.
+2NF -> 3NF removes transitive dependencies by creating:
+Patient
+Doctor
+Department
+Visit
 
-5. DATA INTEGRITY IMPROVED
-Foreign keys maintain proper relationships between tables.
-
+The final 3NF design reduces repeated data and helps prevent
+insertion, update and deletion anomalies.
 */
